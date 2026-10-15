@@ -35,7 +35,7 @@ struct modoptions g_ModOptions = {
 	MODROLL_OFF,              // roll
 	false,                    // melee
 	false,                    // flinch
-	0,                        // sofgore: off — a fresh install bleeds the way the game always did
+	true,                   // sofgore: on by default — zone-scaled blood spray out of the box
 	SPAWNWEAPON_OFF,          // spawnweapon
 	MODWHO_EVERYONE,          // spawnweaponwho
 	THIRDPERSON_CAMDIST,      // camdist
