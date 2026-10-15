@@ -493,6 +493,7 @@ PD_CONSTRUCTOR static void gameConfigInit(void)
 	configRegisterInt("Mod.CombatRoll", &g_ModOptions.roll, MODROLL_OFF, MODROLL_PLAYERSONLY);
 	configRegisterInt("Mod.MeleeCombos", &g_ModOptions.melee, 0, 1);
 	configRegisterInt("Mod.FlinchWhenShot", &g_ModOptions.flinch, 0, 1);
+	configRegisterInt("Mod.SofGore", &g_ModOptions.sofgore, 0, 1);
 	configRegisterInt("Mod.StartArmed", &g_ModOptions.spawnweapon, SPAWNWEAPON_OFF, SPAWNWEAPON_RANDOM);
 	configRegisterInt("Mod.StartArmedFor", &g_ModOptions.spawnweaponwho, MODWHO_EVERYONE, MODWHO_PLAYERSONLY);
 	configRegisterFloat("Mod.ThirdPersonDistance", &g_ModOptions.camdist, 60.f, 600.f);

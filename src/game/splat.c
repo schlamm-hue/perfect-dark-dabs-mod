@@ -1,6 +1,7 @@
 #include <ultra64.h>
 #include "constants.h"
 #include "game/smoke.h"
+#include "game/modoptions.h"
 #include "game/bg.h"
 #include "game/propobj.h"
 #include "game/splat.h"
@@ -135,6 +136,11 @@ void splatsCreateForChrHit(struct prop *prop, struct shotdata *shotdata, struct 
 
 	if (splattype == 0) {
 		u32 qty = rngRandom() % 3;
+
+		if (modSofGoreEnabled()) {
+			// SoF: more splats where the shot landed, scaled by the zone.
+			qty = (u32) (qty * modSofGoreZoneMul(chr->hitpart) + 1);
+		}
 
 		if (qty) {
 			chr->stdsplatsadded += splatsCreate(qty, 0.8f, prop, shotdata, arg2, arg3, isskedar, splattype, TICKS(50), chr2, 0);

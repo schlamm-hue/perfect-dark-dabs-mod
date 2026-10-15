@@ -4060,6 +4060,19 @@ static MenuItemHandlerResult menuhandlerModFlinch(s32 operation, struct menuitem
 	return 0;
 }
 
+static MenuItemHandlerResult menuhandlerModSofGore(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	switch (operation) {
+	case MENUOP_GET:
+		return g_ModOptions.sofgore;
+	case MENUOP_SET:
+		g_ModOptions.sofgore = data->checkbox.value;
+		break;
+	}
+
+	return 0;
+}
+
 /**
  * Bodies left lying where they fell, and how long each one lies there.
  *
@@ -5181,6 +5194,14 @@ struct menuitem g_ExtendedDabsModPlayerMenuItems[] = {
 		(uintptr_t)"Flinch When Shot",
 		0,
 		menuhandlerModFlinch,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Soldier of Fortune Gore",
+		0,
+		menuhandlerModSofGore,
 	},
 	{
 		MENUITEMTYPE_CHECKBOX,
@@ -8155,6 +8176,7 @@ static struct menuitem g_NetRoomRulesMenuItems[] = {
 	ROOMRULE(MENUITEMTYPE_DROPDOWN, "Combat Roll", menuhandlerModRoll),
 	ROOMRULE(MENUITEMTYPE_CHECKBOX, "Melee Combos", menuhandlerModMelee),
 	ROOMRULE(MENUITEMTYPE_CHECKBOX, "Flinch When Shot", menuhandlerModFlinch),
+	ROOMRULE(MENUITEMTYPE_CHECKBOX, "Soldier of Fortune Gore", menuhandlerModSofGore),
 	ROOMRULE(MENUITEMTYPE_CHECKBOX, "Skip Death Screen", menuhandlerModSkipDeathScreen),
 	ROOMRULE(MENUITEMTYPE_CHECKBOX, "Third Person", menuhandlerRoomThirdPerson),
 	ROOMRULE(MENUITEMTYPE_DROPDOWN, "Simulant AI", menuhandlerRoomSimBrain),

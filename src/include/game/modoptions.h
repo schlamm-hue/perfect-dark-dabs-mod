@@ -364,6 +364,7 @@ struct modoptions {
 	s32 roll;        // MODROLL_*
 	s32 melee;       // the punch and kick combo
 	s32 flinch;      // the body twitching where a shot landed
+	s32 sofgore;     // Soldier of Fortune gore: blood spray and splats scaled by the hit zone
 	s32 spawnweapon; // SPAWNWEAPON_*: what everyone spawns holding in an arena
 	s32 spawnweaponwho; // MODWHO_*: whether simulants spawn armed too
 	f32 camdist;     // third person camera, units behind the eye
@@ -436,6 +437,8 @@ bool modCanPlayerRoll(void);
 bool modCanChrRoll(void);
 bool modIsMeleeComboEnabled(void);
 bool modIsFlinchEnabled(void);
+bool modSofGoreEnabled(void);
+f32 modSofGoreZoneMul(s32 hitpart);
 s32 modGetSpawnWeapon(void);
 bool modCanChrSpawnArmed(void);
 s32 modGetBodiesKept(void);

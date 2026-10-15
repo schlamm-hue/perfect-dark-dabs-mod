@@ -4887,6 +4887,31 @@ void chrEmitSparks(struct chrdata *chr, struct prop *prop, s32 hitpart, struct c
 		return;
 	}
 
+	if (modSofGoreEnabled()) {
+		// Soldier of Fortune style: the spray scales with the zone the shot
+		// landed on (ProGore's zone table), aimed along the shot direction.
+		f32 mul = modSofGoreZoneMul(hitpart);
+		s32 sprays = 1 + (s32) mul;
+		s32 i;
+
+		if ((rngRandom() % 10) < (s32) (mul * 2.0f)) {
+			struct coord coord3;
+
+			coord3.x = coord2->x * 42.0f + coord->x;
+			coord3.y = coord2->y * 42.0f + coord->y;
+			coord3.z = coord2->z * 42.0f + coord->z;
+
+			sparksCreate(chrprop->rooms[0], chrprop, &coord3, coord2, 0, SPARKTYPE_FLESH_LARGE);
+		}
+
+		for (i = 0; i < sprays; i++) {
+			sparksCreate(chrprop->rooms[0], chrprop, coord, coord2, 0, SPARKTYPE_BLOOD);
+			sparksCreate(chrprop->rooms[0], chrprop, coord, coord2, 0, SPARKTYPE_FLESH);
+		}
+
+		return;
+	}
+
 	if ((rngRandom() & 4) == 0) {
 		struct coord coord3;
 		coord3.x = coord2->x * 42.0f + coord->x;

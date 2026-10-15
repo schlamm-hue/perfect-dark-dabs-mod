@@ -35,6 +35,7 @@ struct modoptions g_ModOptions = {
 	MODROLL_OFF,              // roll
 	false,                    // melee
 	false,                    // flinch
+	0,                        // sofgore: off — a fresh install bleeds the way the game always did
 	SPAWNWEAPON_OFF,          // spawnweapon
 	MODWHO_EVERYONE,          // spawnweaponwho
 	THIRDPERSON_CAMDIST,      // camdist
@@ -236,6 +237,45 @@ bool modIsFlinchEnabled(void)
 #endif
 
 	return g_ModOptions.flinch != 0;
+}
+
+bool modSofGoreEnabled(void)
+{
+	return g_ModOptions.sofgore != 0;
+}
+
+/**
+ * Soldier of Fortune's ProGore scaled the blood spray by the zone a shot
+ * landed on. Perfect Dark tracks 16 hit parts (HITPART_*); this is the
+ * SoF zone table folded onto them: head and gut spray hard, limbs normal,
+ * feet and hands light, armour (gun, hat) not at all.
+ */
+static const f32 g_SofGoreZoneMul[] = {
+	0.6f, // HITPART_LFOOT
+	1.0f, // HITPART_LSHIN
+	1.0f, // HITPART_LTHIGH
+	0.6f, // HITPART_RFOOT
+	1.0f, // HITPART_RSHIN
+	1.0f, // HITPART_RTHIGH
+	1.2f, // HITPART_PELVIS
+	1.6f, // HITPART_HEAD
+	0.6f, // HITPART_LHAND
+	1.0f, // HITPART_LFOREARM
+	1.0f, // HITPART_LBICEP
+	0.6f, // HITPART_RHAND
+	1.0f, // HITPART_RFOREARM
+	1.0f, // HITPART_RBICEP
+	1.4f, // HITPART_TORSO
+	1.0f, // HITPART_TAIL
+};
+
+f32 modSofGoreZoneMul(s32 hitpart)
+{
+	if (hitpart >= HITPART_LFOOT && hitpart <= HITPART_TAIL) {
+		return g_SofGoreZoneMul[hitpart - HITPART_LFOOT];
+	}
+
+	return 1.0f;
 }
 
 /**
