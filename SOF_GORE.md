@@ -113,3 +113,34 @@ machbar (fixe Skin-Meshes). Lösung über das Smoke-System:
 
 **Nicht machbar:** echtes Dismemberment (Modellvarianten pro Glied nötig),
 3D-Gibs mit Physik (neue F3DEX-Prop-Modelle = eigenes Projekt).
+
+## P5: Decal-Kanten & Varianten (Stand 2026-10-16, Commit `07a9f45`)
+
+Problem im Spiel (Screenshot): man sieht die **Viereck-Kante** der Decal-Textures,
+und alle Puddles sehen gleich aus.
+
+Ursache:
+- SoF-Splat-Art füllt das ganze Bild → am Rand der Textur hart abgeschnitten.
+- Engine rotiert Decals bereits zufällig (`wallhitCreateWith20Args(..., rngRandom() % 360, ...)`)
+  und wählt 3 Blut-Textures (`WALLHITTEX_BLOOD1 + rng % 3`), aber die SoF-Splats sind
+  **radialsymmetrisch** → Rotation unsichtbar, Wiederholung auffällig.
+
+Fix:
+- Konverter `sof-gore-port/m32_pad_rotate.py`: Quelle erst drehen (0°/40°/105°/25°),
+  dann **padding** — Inhalt auf 70 % geschrumpft, zentriert, transparenter Rand.
+  → keine Quad-Kante, Rotation sichtbar, jede Variante asymmetrisch.
+- `splat.c` `splat0f14986c`: Puddle-Auswahl `rng % 3` → `rng % 4` (beide Stellen:
+  Default-Zeile + `SPLATTYPE_PUDDLE`). Slot 4 = `WALLHITTEX_BLOOD4` (0x0c),
+  vorher nur `SPLATTYPE_DROP`.
+- Art-Zuordnung (texpack `sof-gore`):
+  | Tex | Slot | Quelle |
+  |-----|------|--------|
+  | `0854` | BLOOD1 | bldsprinkle (rot 0°) |
+  | `0855` | BLOOD2 | bldglob4 (rot 40°) |
+  | `0856` | BLOOD3 | bldglob5 (rot 105°) |
+  | `08f0` | BLOOD4 | blood_pool2 (rot 25°) — Drops + 4. Puddle-Variante |
+
+Wichtig: `g_TcWallhitConfigs[9..12]` in `textureconfig.c` = die vier Blut-Slots
+(0x0854/0x0855/0x0856/0x08f0); `g_WallhitTexes[]` in `wallhit.c` liefert Größe/Typ.
+Texturen ohne Build änderbar (F9 Reload im Spiel); der `% 4`-Patch braucht einen Build.
+
