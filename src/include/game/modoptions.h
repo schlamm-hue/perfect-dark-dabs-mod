@@ -439,6 +439,7 @@ bool modIsMeleeComboEnabled(void);
 bool modIsFlinchEnabled(void);
 bool modSofGoreEnabled(void);
 f32 modSofGoreZoneMul(s32 hitpart);
+f32 modSofGoreHitRamp(struct chrdata *chr);
 s32 modGetSpawnWeapon(void);
 bool modCanChrSpawnArmed(void);
 s32 modGetBodiesKept(void);

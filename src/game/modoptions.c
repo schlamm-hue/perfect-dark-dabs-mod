@@ -279,6 +279,48 @@ f32 modSofGoreZoneMul(s32 hitpart)
 }
 
 /**
+ * SoF's gz_multi cvars grew the spray when a target was being shredded:
+ * each hit inside a short window adds a quarter to the spray, up to double.
+ * Tracked per chrnum in a side table so no chrdata layout has to move.
+ */
+#define SOFGORE_HITWINDOW 120 // time60 units, ~2 seconds
+#define SOFGORE_MAXCHRS   128
+
+static s32 s_SofHitTime[SOFGORE_MAXCHRS];
+static s32 s_SofHitCount[SOFGORE_MAXCHRS];
+
+f32 modSofGoreHitRamp(struct chrdata *chr)
+{
+#ifndef PLATFORM_N64
+	s32 idx;
+
+	if (chr == NULL) {
+		return 1.0f;
+	}
+
+	idx = chr->chrnum;
+
+	if (idx < 0 || idx >= SOFGORE_MAXCHRS) {
+		return 1.0f;
+	}
+
+	if (g_Vars.updatetime - s_SofHitTime[idx] > SOFGORE_HITWINDOW) {
+		s_SofHitCount[idx] = 0;
+	}
+
+	s_SofHitTime[idx] = g_Vars.updatetime;
+
+	if (s_SofHitCount[idx] < 4) {
+		s_SofHitCount[idx]++;
+	}
+
+	return 1.0f + 0.25f * (s_SofHitCount[idx] - 1);
+#else
+	return 1.0f;
+#endif
+}
+
+/**
  * SPAWNWEAPON_OFF, or which weapon everyone spawns an arena match holding.
  */
 s32 modGetSpawnWeapon(void)

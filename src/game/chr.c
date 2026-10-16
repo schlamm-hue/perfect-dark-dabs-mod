@@ -4892,9 +4892,14 @@ void chrEmitSparks(struct chrdata *chr, struct prop *prop, s32 hitpart, struct c
 		// landed on (ProGore's zone table), aimed along the shot direction.
 		// The stock blood effect is N64-frugal (5 sparks, 35 ticks, dark);
 		// boost the type table around the calls so the spray is a real spray.
-		f32 mul = modSofGoreZoneMul(hitpart);
+		f32 mul = modSofGoreZoneMul(hitpart) * modSofGoreHitRamp(chr);
 		s32 sprays = 1 + (s32) mul;
 		s32 i;
+
+		if (mul > 2.5f) {
+			mul = 2.5f;
+		}
+
 		struct sparktype *blood = &g_SparkTypes[SPARKTYPE_BLOOD];
 		struct sparktype *flesh = &g_SparkTypes[SPARKTYPE_FLESH];
 		u16 bnum = blood->numsparks;

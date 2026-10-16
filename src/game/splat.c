@@ -89,8 +89,8 @@ void splatTickChr(struct prop *prop)
 
 			if (thudframe != -1.0f && modelGetCurAnimFrame(chr->model) < thudframe) {
 				osSyncPrintf("SPLAT : Not Dead Enough %s%s%f", "", "", modelGetCurAnimFrame(chr->model));
-			} else if (chr->tickssincesplat > TICKS(30) && chr->deaddropsplatsadded < 6) {
-				chr->deaddropsplatsadded += splatsCreate(1, 1.1f, prop, NULL, 0, 0, isskedar, SPLATTYPE_PUDDLE, TICKS(150), attacker, rngRandom() & 8);
+			} else if (chr->tickssincesplat > (modSofGoreEnabled() ? TICKS(8) : TICKS(30)) && chr->deaddropsplatsadded < (modSofGoreEnabled() ? 12 : 6)) {
+				chr->deaddropsplatsadded += splatsCreate(1, modSofGoreEnabled() ? 1.5f : 1.1f, prop, NULL, 0, 0, isskedar, SPLATTYPE_PUDDLE, TICKS(150), attacker, rngRandom() & 8);
 			}
 		} else {
 			// Consider creating a wounded drop
@@ -141,10 +141,17 @@ void splatsCreateForChrHit(struct prop *prop, struct shotdata *shotdata, struct 
 
 		if (modSofGoreEnabled()) {
 			// SoF: more splats, bigger, and they stay visible longer.
-			f32 mul = modSofGoreZoneMul(chr->hitpart);
+			f32 mul = modSofGoreZoneMul(chr->hitpart) * modSofGoreHitRamp(chr);
 			qty = (u32) (qty * mul * 2.0f + 2);
 			scale = 0.8f + 0.5f * mul;
 			timermax = TICKS(90);
+
+			if (chr->actiontype == ACT_DIE || chr->actiontype == ACT_DEAD) {
+				// SoF: a kill leaves a pool, not a sprinkle.
+				qty += 4;
+				scale += 0.3f;
+				timermax = TICKS(200);
+			}
 		}
 
 		if (qty) {
