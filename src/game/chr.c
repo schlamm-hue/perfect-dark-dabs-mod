@@ -4936,6 +4936,22 @@ void chrEmitSparks(struct chrdata *chr, struct prop *prop, s32 hitpart, struct c
 			blood->unk20 = 0xa01818ff;
 		}
 
+		if (mul >= 2.0f) {
+			// SoF: head/gut hits throw meat chunks — billboard gibs via the
+			// smoke system (SMOKETYPE_GIB, texture 0x0c97 texpacked to art).
+			s32 gibs = 1 + (rngRandom() % 2);
+
+			for (i = 0; i < gibs; i++) {
+				struct coord gibpos;
+
+				gibpos.x = coord->x + coord2->x * (f32) (20 + rngRandom() % 40) + (f32) (rngRandom() % 24 - 12);
+				gibpos.y = coord->y + coord2->y * (f32) (20 + rngRandom() % 40) + (f32) (rngRandom() % 24 - 12);
+				gibpos.z = coord->z + coord2->z * (f32) (20 + rngRandom() % 40) + (f32) (rngRandom() % 24 - 12);
+
+				smokeCreateSimple(&gibpos, chrprop->rooms, (rngRandom() % 2) ? SMOKETYPE_GIB : SMOKETYPE_GIB2);
+			}
+		}
+
 		blood->numsparks = bnum;
 		blood->maxage = bage;
 		blood->unk00 = bspd;

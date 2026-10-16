@@ -151,6 +151,21 @@ void splatsCreateForChrHit(struct prop *prop, struct shotdata *shotdata, struct 
 				qty += 4;
 				scale += 0.3f;
 				timermax = TICKS(200);
+
+				if (chr->actiontype == ACT_DIE) {
+					// SoF: the killing blow throws a burst of meat chunks.
+					s32 g;
+
+					for (g = 0; g < 4; g++) {
+						struct coord gibpos;
+
+						gibpos.x = prop->pos.x + (f32) (rngRandom() % 60 - 30);
+						gibpos.y = prop->pos.y + (f32) (rngRandom() % 40 - 10);
+						gibpos.z = prop->pos.z + (f32) (rngRandom() % 60 - 30);
+
+						smokeCreateSimple(&gibpos, prop->rooms, (rngRandom() % 2) ? SMOKETYPE_GIB : SMOKETYPE_GIB2);
+					}
+				}
 			}
 		}
 

@@ -266,6 +266,11 @@ struct textureconfig g_TcSparkConfigs[] = {
 	/*0*/ { 0x001a, 8,   16,  5, G_IM_FMT_IA,   G_IM_SIZ_8b,  G_TX_CLAMP,  G_TX_CLAMP  },
 };
 
+// SoF gore port: meat-chunk billboard for SMOKETYPE_GIB/GIB2 (smoke.c).
+// 0x0c97 is g_TcGeneralConfigs[2]'s texture - no call site uses index 2,
+// so the number is exclusive and safe to texpack to gib art.
+struct textureconfig g_TcGibConfig = { 0x0c97, 16, 16, 3, G_IM_FMT_IA, G_IM_SIZ_8b, G_TX_CLAMP, G_TX_CLAMP };
+
 struct textureconfig g_TcGeneralConfigs[] = {
 	/* 0*/ { 0x001b, 16,  16,  3, G_IM_FMT_IA,   G_IM_SIZ_8b,  G_TX_CLAMP,  G_TX_CLAMP  },
 	/* 1*/ { 0x0001, 1,   1,   0, G_IM_FMT_RGBA, G_IM_SIZ_32b, G_TX_WRAP,   G_TX_WRAP   },

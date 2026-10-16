@@ -4,6 +4,7 @@
 #include "game/gfxmemory.h"
 #include "game/prop.h"
 #include "game/tex.h"
+#include "textureconfig.h"
 #include "game/camera.h"
 #include "game/smoke.h"
 #include "game/bg.h"
@@ -57,6 +58,8 @@ struct smoketype g_SmokeTypes[] = {
 	/*20*/ { 150, 8,  6,   18,  0.072000004351139, 0xff, 0xff, 0xff, 0.36,            0,   0.228,            0.084000006318092, 1 }, // SMOKETYPE_WATER
 	/*21*/ { 183, 33, 37,  60,  0.024,             0x20, 0x20, 0x20, 0.36,            36,  1.8000000715256,  2.16,              6 }, // SMOKETYPE_DEBRIS
 	/*22*/ { 183, 4,  6,   60,  0.03600000217557,  0xaf, 0x8f, 0x6f, 0.36,            36,  1.8000000715256,  0.36,              1 }, // SMOKETYPE_UFO
+	/*23*/ { 100, 50, 25,  10,  0.12,              0xb0, 0x35, 0x35, 0.5,             1,   0.05,             -0.25,             1.2 }, // SMOKETYPE_GIB: SoF meat chunk, falls
+	/*24*/ { 80,  50, 30,  7,   0.2,               0x90, 0x28, 0x28, 0.7,             1,   0.04,             -0.35,             1.5 }, // SMOKETYPE_GIB2: smaller chunk
 #else
 	/*00*/ { 1,   60, 99,  0,   0,                 0x80, 0x80, 0x80, 0.3,             120, 0.15,             0.3,               1 }, // SMOKETYPE_NONE
 	/*01*/ { 220, 60, 45,  60,  0.02,              0x50, 0x50, 0x60, 0.3,             120, 0.15,             0.3,               1 }, // SMOKETYPE_ELECTRICAL
@@ -81,6 +84,8 @@ struct smoketype g_SmokeTypes[] = {
 	/*20*/ { 180, 10, 8,   18,  0.06,              0xff, 0xff, 0xff, 0.3,             0,   0.19,             0.07,              1 }, // SMOKETYPE_WATER
 	/*21*/ { 220, 40, 45,  60,  0.02,              0x20, 0x20, 0x20, 0.3,             30,  1.5,              1.8,               6 }, // SMOKETYPE_DEBRIS
 	/*22*/ { 220, 5,  8,   60,  0.03,              0xaf, 0x8f, 0x6f, 0.3,             30,  1.5,              0.3,               1 }, // SMOKETYPE_UFO
+	/*23*/ { 100, 50, 25,  10,  0.12,              0xb0, 0x35, 0x35, 0.5,             1,   0.05,             -0.25,             1.2 }, // SMOKETYPE_GIB: SoF meat chunk, falls
+	/*24*/ { 80,  50, 30,  7,   0.2,               0x90, 0x28, 0x28, 0.7,             1,   0.04,             -0.35,             1.5 }, // SMOKETYPE_GIB2: smaller chunk
 #endif
 };
 
@@ -663,7 +668,14 @@ Gfx *smokeRender(struct prop *prop, Gfx *gdl, bool xlupass)
 			gSPMatrix(gdl++, osVirtualToPhysical(&var800a3488), G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
 		}
 
-		gSPDisplayList(gdl++, g_TexGdl1);
+		if (smoke->type == SMOKETYPE_GIB || smoke->type == SMOKETYPE_GIB2) {
+			// SoF gore port: meat chunks draw the texpacked gib texture, not
+			// the shared smoke puff.
+			texSelect(&gdl, &g_TcGibConfig, 4, 0, 2, 1, NULL);
+		} else {
+			gSPDisplayList(gdl++, g_TexGdl1);
+		}
+
 		gDPSetColorDither(gdl++, G_CD_NOISE);
 
 		if (near) {

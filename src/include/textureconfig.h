@@ -20,6 +20,7 @@ extern struct textureconfig g_TcSkyWaterConfigs[6];
 extern struct textureconfig g_TcGroup11Configs[6];
 extern struct textureconfig g_TcLightGlareConfigs[10];
 extern struct textureconfig g_TcSparkConfigs[1];
+extern struct textureconfig g_TcGibConfig;
 extern struct textureconfig g_TcGeneralConfigs[56];
 extern struct textureconfig g_TcRadarConfigs[1];
 

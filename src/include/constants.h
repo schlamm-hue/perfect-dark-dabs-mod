@@ -4222,6 +4222,8 @@ s32 langpackIsCjk(void);
 #define SMOKETYPE_WATER            20 // Splash effect in Chicago
 #define SMOKETYPE_DEBRIS           21 // Crash site cockpit, Skedar Ruins outro
 #define SMOKETYPE_UFO              22 // AF1 outro
+#define SMOKETYPE_GIB              23 // SoF gore port: meat-chunk billboard
+#define SMOKETYPE_GIB2             24 // SoF gore port: smaller, faster chunk
 
 #define SNDSTATEFLAG_01 0x01
 #define SNDSTATEFLAG_02 0x02
