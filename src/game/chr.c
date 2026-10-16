@@ -4890,9 +4890,26 @@ void chrEmitSparks(struct chrdata *chr, struct prop *prop, s32 hitpart, struct c
 	if (modSofGoreEnabled()) {
 		// Soldier of Fortune style: the spray scales with the zone the shot
 		// landed on (ProGore's zone table), aimed along the shot direction.
+		// The stock blood effect is N64-frugal (5 sparks, 35 ticks, dark);
+		// boost the type table around the calls so the spray is a real spray.
 		f32 mul = modSofGoreZoneMul(hitpart);
 		s32 sprays = 1 + (s32) mul;
 		s32 i;
+		struct sparktype *blood = &g_SparkTypes[SPARKTYPE_BLOOD];
+		struct sparktype *flesh = &g_SparkTypes[SPARKTYPE_FLESH];
+		u16 bnum = blood->numsparks;
+		u16 bage = blood->maxage;
+		u16 bspd = blood->unk00;
+		u16 fnum = flesh->numsparks;
+		u16 fage = flesh->maxage;
+		u16 fspd = flesh->unk00;
+
+		blood->numsparks = (u16) (bnum * (1.0f + mul));
+		blood->maxage = (u16) (bage * 1.7f);
+		blood->unk00 = (u16) (bspd * 1.5f);
+		flesh->numsparks = (u16) (fnum * (1.0f + mul));
+		flesh->maxage = (u16) (fage * 1.7f);
+		flesh->unk00 = (u16) (fspd * 1.4f);
 
 		if ((rngRandom() % 10) < (s32) (mul * 2.0f)) {
 			struct coord coord3;
@@ -4907,7 +4924,19 @@ void chrEmitSparks(struct chrdata *chr, struct prop *prop, s32 hitpart, struct c
 		for (i = 0; i < sprays; i++) {
 			sparksCreate(chrprop->rooms[0], chrprop, coord, coord2, 0, SPARKTYPE_BLOOD);
 			sparksCreate(chrprop->rooms[0], chrprop, coord, coord2, 0, SPARKTYPE_FLESH);
+
+			// sparksCreate tints blood from the character's (dark) blood colour;
+			// SoF sprays read as fresh red, so brighten what it just set.
+			blood->unk1c = 0x901515ff;
+			blood->unk20 = 0xa01818ff;
 		}
+
+		blood->numsparks = bnum;
+		blood->maxage = bage;
+		blood->unk00 = bspd;
+		flesh->numsparks = fnum;
+		flesh->maxage = fage;
+		flesh->unk00 = fspd;
 
 		return;
 	}

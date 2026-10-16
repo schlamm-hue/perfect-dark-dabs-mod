@@ -136,14 +136,19 @@ void splatsCreateForChrHit(struct prop *prop, struct shotdata *shotdata, struct 
 
 	if (splattype == 0) {
 		u32 qty = rngRandom() % 3;
+		f32 scale = 0.8f;
+		s32 timermax = TICKS(50);
 
 		if (modSofGoreEnabled()) {
-			// SoF: more splats where the shot landed, scaled by the zone.
-			qty = (u32) (qty * modSofGoreZoneMul(chr->hitpart) + 1);
+			// SoF: more splats, bigger, and they stay visible longer.
+			f32 mul = modSofGoreZoneMul(chr->hitpart);
+			qty = (u32) (qty * mul * 2.0f + 2);
+			scale = 0.8f + 0.5f * mul;
+			timermax = TICKS(90);
 		}
 
 		if (qty) {
-			chr->stdsplatsadded += splatsCreate(qty, 0.8f, prop, shotdata, arg2, arg3, isskedar, splattype, TICKS(50), chr2, 0);
+			chr->stdsplatsadded += splatsCreate(qty, scale, prop, shotdata, arg2, arg3, isskedar, splattype, timermax, chr2, 0);
 		}
 	}
 #endif
