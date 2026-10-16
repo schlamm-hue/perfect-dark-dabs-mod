@@ -85,3 +85,31 @@ SDL_MOUSE_RELATIVE_MODE_WARP=1 ./build/pd.x86_64
 - Multi-Hit-Skalierung (SoFs `gz_multi%d`: Spray wächst bei Trefferserien)
 - Blood-Textures/Sounds aus SoF-Assets (N64-Formatkonverter nötig)
 - Gibs/Dismemberment: eigenes Projekt (PD hat kein Gib-System, N64-Prop-Physik nötig)
+
+## P3 + P4 (Stand 2026-10-16, Commits `a876d6e`, `923fb6d`)
+
+**P3 (fertig):** Multi-Hit-Ramp `modSofGoreHitRamp` (pro `chrnum`, Fenster über
+`g_Vars.updateframe` — Feld heißt NICHT `updatetime`), Kill-Pool + beschleunigtes
+Leichen-Bluten in `splat.c` (`ACT_DIE`/`ACT_DEAD`, kein `chr->health`-Feld).
+
+**P4 (fertig): Gib-Billboards.** PD hat kein Gib-System; Dismemberment ist nicht
+machbar (fixe Skin-Meshes). Lösung über das Smoke-System:
+- `SMOKETYPE_GIB` (23) / `SMOKETYPE_GIB2` (24) in `constants.h`, Tabellenzeilen in
+  `g_SmokeTypes[]` (PAL **und** NTSC-Zweig; `unk1c` = Vertikalgeschwindigkeit negativ
+  = fällt, `unk18` = Wachstum, `unk20` = Drift).
+- `g_TcGibConfig` in `textureconfig.c`: Texturnummer **0x0c97** =
+  `g_TcGeneralConfigs[2]` — kein Call-Site nutzt Index 2, Nummer ist exklusiv.
+- `smokeRender`: für Gib-Typen `texSelect(&gdl, &g_TcGibConfig, 4, 0, 2, 1, NULL)`
+  statt des geteilten `g_TexGdl1` (alle Smokes teilen sonst EINE Textur).
+- Spawn: `chrEmitSparks` (mul ≥ 2.0 → Head/Gut, 1–2 Chunks entlang Schussrichtung)
+  und Kill-Burst (4 Chunks bei `ACT_DIE`) in `splat.c`.
+- Art: `texpack-staging/sof-gore/0c97.png` ← SoF `chunks_meat/chunk1.tga`
+  (16×16 Graustufen+Alpha, Luminanz normalisiert; Rauchfarbe tintet rot).
+- Texpack-Setup: `build/texture-packs/sof-gore/` + `pd.ini` `TexturePack=sof-gore`
+  (`Mod.LoadTextures=1`); F8 toggle / F9 reload / F10 cycle.
+- Decals (Ebene 1): `0854/0855/0856` ← bldsprinkle/bldglob4/bldglob5,
+  `08f0` ← blood_pool, `001a` Spark-Strich. Konverter: `sof-gore-port/m32_to_texpack.py`
+  (m32 = 516 B Header + Mip-Breitenliste + Offsettabelle, Pixdaten roh RGBA).
+
+**Nicht machbar:** echtes Dismemberment (Modellvarianten pro Glied nötig),
+3D-Gibs mit Physik (neue F3DEX-Prop-Modelle = eigenes Projekt).
