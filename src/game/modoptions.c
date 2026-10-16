@@ -304,11 +304,11 @@ f32 modSofGoreHitRamp(struct chrdata *chr)
 		return 1.0f;
 	}
 
-	if (g_Vars.updatetime - s_SofHitTime[idx] > SOFGORE_HITWINDOW) {
+	if (g_Vars.updateframe - s_SofHitTime[idx] > SOFGORE_HITWINDOW) {
 		s_SofHitCount[idx] = 0;
 	}
 
-	s_SofHitTime[idx] = g_Vars.updatetime;
+	s_SofHitTime[idx] = g_Vars.updateframe;
 
 	if (s_SofHitCount[idx] < 4) {
 		s_SofHitCount[idx]++;
