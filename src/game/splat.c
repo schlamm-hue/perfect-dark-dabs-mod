@@ -457,7 +457,8 @@ void splat0f14986c(struct splatdata *splat)
 	f32 distance;
 	RoomNum smokerooms[2];
 
-	texnum = WALLHITTEX_BLOOD1 + (rngRandom() % 3);
+	// SoF gore: 4 blood variants (BLOOD4 art doubles as the 4th puddle look).
+	texnum = WALLHITTEX_BLOOD1 + (rngRandom() % 4);
 
 	if (splat->objprop != NULL && splat->objprop->type == PROPTYPE_OBJ) {
 		obj = splat->objprop->obj;
@@ -470,7 +471,7 @@ void splat0f14986c(struct splatdata *splat)
 
 	switch (splat->splattype) {
 	case SPLATTYPE_PUDDLE:
-		texnum = WALLHITTEX_BLOOD1 + (rngRandom() % 3);
+		texnum = WALLHITTEX_BLOOD1 + (rngRandom() % 4);
 		break;
 	case SPLATTYPE_DROP:
 		texnum = WALLHITTEX_BLOOD4 + (rngRandom() % 1);
